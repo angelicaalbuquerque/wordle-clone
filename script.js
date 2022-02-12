@@ -15294,7 +15294,12 @@ const dictionary = [
 ];
 
 const WORD_LENGTH = 5;
-const targetWord = "";
+
+const offsetFromDate = new Date(2022, 0, 1);
+const msOffset = Date.now() - offsetFromDate;
+const dayOffSet = msOffset / 1000 / 60 / 60 / 24;
+console.log(dayOffSet);
+const targetWord = targetWords[Math.floor(dayOffSet)];
 
 const guessGrid = document.querySelector("[data-guess-grid]");
 

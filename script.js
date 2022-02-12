@@ -15296,16 +15296,13 @@ const dictionary = [
 const WORD_LENGTH = 5;
 const FLIP_ANIMATION_DURATION = 500;
 const DANCE_ANIMATION_DURATION = 500;
-
 const keyboard = document.querySelector("[data-keyboard]");
+const alertContainer = document.querySelector("[data-alert-container]");
+const guessGrid = document.querySelector("[data-guess-grid]");
 const offsetFromDate = new Date(2022, 0, 1);
 const msOffset = Date.now() - offsetFromDate;
-const dayOffSet = msOffset / 1000 / 60 / 60 / 24;
-const targetWord = targetWords[Math.floor(dayOffSet)];
-
-const alertContainer = document.querySelector("[data-alert-container]");
-
-const guessGrid = document.querySelector("[data-guess-grid]");
+const dayOffset = msOffset / 1000 / 60 / 60 / 24;
+const targetWord = targetWords[Math.floor(dayOffset)];
 
 startInteraction();
 
@@ -15360,6 +15357,15 @@ function pressKey(key) {
   nextTile.dataset.letter = key.toLowerCase();
   nextTile.textContent = key;
   nextTile.dataset.state = "active";
+}
+
+function deleteKey() {
+  const activeTiles = getActiveTiles();
+  const lastTile = activeTiles[activeTiles.length - 1];
+  if (lastTile == null) return;
+  lastTile.textContent = "";
+  delete lastTile.dataset.state;
+  delete lastTile.dataset.letter;
 }
 
 function submitGuess() {
@@ -15421,15 +15427,6 @@ function flipTile(tile, index, array, guess) {
   );
 }
 
-function deleteKey() {
-  const activeTiles = getActiveTiles();
-  const lastTile = activeTiles[activeTiles.length - 1];
-  if (lastTile == null) return;
-  lastTile.textContent = "";
-  delete lastTile.dataset.state;
-  delete lastTile.dataset.letter;
-}
-
 function getActiveTiles() {
   return guessGrid.querySelectorAll('[data-state="active"]');
 }
@@ -15459,5 +15456,35 @@ function shakeTiles(tiles) {
       },
       { once: true },
     );
+  });
+}
+
+function checkWinLose(guess, tiles) {
+  if (guess === targetWord) {
+    showAlert("You Win!", 5000);
+    danceTiles(tiles);
+    stopInteraction();
+    return;
+  }
+
+  const remainingTiles = guessGrid.querySelectorAll(":not([data-letter])");
+  if (remainingTiles.length === 0) {
+    showAlert(targetWord.toUpperCase(), null);
+    stopInteraction();
+  }
+}
+
+function danceTiles(tiles) {
+  tiles.forEach((tile, index) => {
+    setTimeout(() => {
+      tile.classList.add("dance");
+      tile.addEventListener(
+        "animationend",
+        () => {
+          tile.classList.remove("dance");
+        },
+        { once: true },
+      );
+    }, (index * DANCE_ANIMATION_DURATION) / 5);
   });
 }

@@ -50,6 +50,7 @@ O Wordle Clone está no ar através [deste link](https://angelicaalbuquerque.git
 
 ---
 
+
 <p align="center">
 Feito com ☕ e 🖤 por Angélica Albuquerque
 </p>
